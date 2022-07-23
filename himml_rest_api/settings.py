@@ -26,11 +26,19 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        'knox.auth.TokenAuthentication',
+    ]
+}
 # Application definition
 
 INSTALLED_APPS = [
     'profile_api',
     'rest_framework',
+    'knox',
 
     'django.contrib.admin',
     'django.contrib.auth',

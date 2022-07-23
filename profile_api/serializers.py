@@ -1,5 +1,3 @@
-from contextlib import nullcontext
-
 from rest_framework import serializers
 from profile_api.models import UserProfile
 
@@ -33,3 +31,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
         user_profile.set_password(password)
         user_profile.save()
         return user_profile
+
