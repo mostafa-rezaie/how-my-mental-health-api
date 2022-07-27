@@ -37,6 +37,7 @@ REST_FRAMEWORK = {
 
 INSTALLED_APPS = [
     'profile_api',
+    'questionnaire',
     'rest_framework',
     'knox',
     'corsheaders',
