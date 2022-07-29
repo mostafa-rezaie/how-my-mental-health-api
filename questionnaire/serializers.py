@@ -15,10 +15,14 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 class QuestionnaireSerializer(serializers.ModelSerializer):
     question_number = serializers.SerializerMethodField(read_only=True)
+    estimated_time = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Questionnaires
-        fields = ['name', 'question_number']
+        fields = ['name', 'description', 'question_number', 'estimated_time']
 
     def get_question_number(self, obj):
         return obj.question.count()
+
+    def get_estimated_time(self, obj):
+        return self.get_question_number(obj) * 10

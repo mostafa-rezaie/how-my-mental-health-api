@@ -7,6 +7,7 @@ from profile_api.models import UserProfile
 class Questionnaires(models.Model):
     name = models.CharField(max_length=40, unique=True)
     date_created = models.DateField(auto_now=True)
+    description = models.TextField(default='decs', null=True)
 
     class Meta:
         ordering = ['id']
@@ -27,6 +28,8 @@ class Question(models.Model):
     question_type = models.IntegerField(choices=TYPE, default=5)
     title = models.CharField(max_length=255, verbose_name='Title')
     is_active = models.BooleanField(default=True, verbose_name='Active Status')
+
+    # TODO:add word length for each question
 
     def __str__(self):
         return self.title
