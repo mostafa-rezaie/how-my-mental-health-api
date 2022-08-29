@@ -7,7 +7,7 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Question
-        fields = ['questionnaire_name', 'question_type', 'title', ]
+        fields = ['questionnaire_name', 'question_type','qid', 'title' ]
 
     def get_questionnaire_name(self, obj):
         return obj.questionnaire.name

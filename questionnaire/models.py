@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.db import models
 from profile_api.models import UserProfile
 
@@ -28,7 +29,7 @@ class Question(models.Model):
     question_type = models.IntegerField(choices=TYPE, default=5)
     title = models.CharField(max_length=255, verbose_name='Title')
     is_active = models.BooleanField(default=True, verbose_name='Active Status')
-
+    qid = models.IntegerField(null=True)
     # TODO:add word length for each question
 
     def __str__(self):
