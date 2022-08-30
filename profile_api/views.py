@@ -72,9 +72,11 @@ class LogoutUser(APIView):
         return Response({'message': 'Logout successful'})
 
 
-class Test(APIView):
+class IsUp(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
 
     def get(self, request, *args, **kwargs):
-        return Response({'message': 'allowed'})
+        return Response({'message': 'system is up'})
+
+
