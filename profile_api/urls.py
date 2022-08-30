@@ -6,4 +6,5 @@ urlpatterns = [
     path('sign-up', views.RegisterNewUser.as_view()),
     path('login', views.AuthenticateUser.as_view()),
     path('logout', LogoutView.as_view()),
+    path('is-up', views.IsUp.as_view())
 ]
