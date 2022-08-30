@@ -1,7 +1,11 @@
-from .models import Question, Questionnaires,Answers
-from rest_framework.generics import ListAPIView,CreateAPIView
+from .models import Question, Questionnaires, Answers
+from rest_framework.generics import ListAPIView, CreateAPIView
 from .serializers import QuestionSerializer, QuestionnaireSerializer
 from django.http import HttpResponse, JsonResponse
+from knox.auth import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+import json
 
 
 class Questionnaire(ListAPIView):
@@ -27,16 +31,32 @@ class Questions(ListAPIView):
         try:
             return super().get(request, *args, **kwargs)
         except:
-            return JsonResponse({'message': 'questionnaire Not Found'},status=404)
+            return JsonResponse({'message': 'questionnaire Not Found'}, status=404)
 
 
 class Answer(CreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    # serializer_class = AnswerSerializer
+
     def post(self, request, *args, **kwargs):
-        print(request.data['data'])
+        # print(request.data['data'])
         answers = request.data['data']
         user = request.user
-        question = Question.objects.get(qid=1)
-        answer = Answer(user = user , )
+        questionnaire_id = request.data['questionnaireId']
+        try:
+            questionnaire = Questionnaires.objects.get(id=questionnaire_id)
+        except:
+            return Response({'message': 'this questionnaire does not exist'})
+        questionnaire_name = questionnaire.name
+        # print(request.user)
         for answer in answers:
-            
-        return HttpResponse('hh')
+            qid = answer['qid']
+            answer_choice = answer['answer']
+            question = Question.objects.filter(questionnaire__name__contains=questionnaire_name).get(
+                qid__contains=qid)
+            Answers.objects.create(user=request.user, question=question, answer=answer_choice)
+        return Response({'message': 'answers submitted successfully'})
+
+
