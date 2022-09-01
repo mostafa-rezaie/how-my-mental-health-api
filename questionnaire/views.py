@@ -1,4 +1,4 @@
-from .models import Question, Questionnaires, Answers
+from .models import Question, Questionnaires, Answers, Results
 from rest_framework.generics import ListAPIView, CreateAPIView
 from .serializers import QuestionSerializer, QuestionnaireSerializer
 from django.http import HttpResponse, JsonResponse
@@ -51,12 +51,14 @@ class Answer(CreateAPIView):
             return Response({'message': 'this questionnaire does not exist'})
         questionnaire_name = questionnaire.name
         # print(request.user)
+        question_counter = 0
         for answer in answers:
+            question_counter = question_counter + 1
             qid = answer['qid']
             answer_choice = answer['answer']
             question = Question.objects.filter(questionnaire__name__contains=questionnaire_name).get(
                 qid__contains=qid)
             Answers.objects.create(user=request.user, question=question, answer=answer_choice)
+        score = question_counter * 3.1
+        Results.objects.create(user=request.user, num_of_question_answered=question_counter, duration=320, score=score)
         return Response({'message': 'answers submitted successfully'})
-
-

@@ -30,6 +30,7 @@ class Question(models.Model):
     title = models.CharField(max_length=255, verbose_name='Title')
     is_active = models.BooleanField(default=True, verbose_name='Active Status')
     qid = models.IntegerField(null=True)
+
     # TODO:add word length for each question
 
     def __str__(self):
@@ -44,3 +45,14 @@ class Answers(models.Model):
     user = models.ForeignKey(UserProfile, related_name='answer', on_delete=models.CASCADE)
     question = models.ForeignKey(Question, related_name='answer', on_delete=models.CASCADE)
     answer = models.IntegerField(choices=TYPE, verbose_name='Answer Choice')
+
+
+class Results(models.Model):
+    class Meta:
+        ordering = ['id']
+
+    user = models.ForeignKey(UserProfile, related_name='result', on_delete=models.CASCADE)
+    num_of_question_answered = models.IntegerField()
+    duration = models.IntegerField(verbose_name='duration(s)')
+    score = models.FloatField()
+    created = models.DateTimeField(auto_now_add=True)
