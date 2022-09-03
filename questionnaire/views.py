@@ -5,6 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from knox.auth import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import status
 import json
 
 
@@ -50,15 +51,17 @@ class Answer(CreateAPIView):
         except:
             return Response({'message': 'this questionnaire does not exist'})
         questionnaire_name = questionnaire.name
-        # print(request.user)
-        question_counter = 0
+        question_count = Question.objects.filter(questionnaire__name=questionnaire_name).count()
+        answers_count = len(answers)
+        if answers_count != question_count:
+            return Response({'message': 'questionnaire is not answered completely'}, status=status.HTTP_400_BAD_REQUEST)
+        # print('>>>>>>>>>>>', len(answers))
         for answer in answers:
-            question_counter = question_counter + 1
             qid = answer['qid']
             answer_choice = answer['answer']
             question = Question.objects.filter(questionnaire__name__contains=questionnaire_name).get(
                 qid__contains=qid)
             Answers.objects.create(user=request.user, question=question, answer=answer_choice)
-        score = question_counter * 3.1
-        Results.objects.create(user=request.user, num_of_question_answered=question_counter, duration=320, score=score)
+        score = answers_count * 3.1
+        Results.objects.create(user=request.user, num_of_question_answered=answers_count, duration=320, score=score)
         return Response({'message': 'answers submitted successfully'})
