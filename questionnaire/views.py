@@ -1,6 +1,6 @@
 from .models import Question, Questionnaires, Answers, Results
 from rest_framework.generics import ListAPIView, CreateAPIView
-from .serializers import QuestionSerializer, QuestionnaireSerializer
+from .serializers import QuestionSerializer, QuestionnaireSerializer, ResultsSerializer
 from django.http import HttpResponse, JsonResponse
 from knox.auth import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -42,7 +42,6 @@ class Answer(CreateAPIView):
     # serializer_class = AnswerSerializer
 
     def post(self, request, *args, **kwargs):
-        # print(request.data['data'])
         answers = request.data['data']
         user = request.user
         questionnaire_id = request.data['questionnaireId']
@@ -63,5 +62,25 @@ class Answer(CreateAPIView):
                 qid__contains=qid)
             Answers.objects.create(user=request.user, question=question, answer=answer_choice)
         score = answers_count * 3.1
-        Results.objects.create(user=request.user, num_of_question_answered=answers_count, duration=320, score=score)
+        Results.objects.create(user=request.user,
+                               num_of_question_answered=answers_count,
+                               duration=320,
+                               score=score,
+                               questionnaire=questionnaire)
         return Response({'message': 'answers submitted successfully'})
+
+
+class UserResults(ListAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = ResultsSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Results.objects.filter(user=user)
+
+    def get(self, request, *args, **kwargs):
+        try:
+            return super().get(request, *args, **kwargs)
+        except:
+            return JsonResponse({'message': 'user Not Found'}, status=404)

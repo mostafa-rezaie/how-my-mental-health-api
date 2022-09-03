@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Question, Questionnaires
+from .models import Question, Questionnaires,Results
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -26,3 +26,9 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
 
     def get_estimated_time(self, obj):
         return self.get_question_number(obj) * 10
+
+
+class ResultsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Results
+        fields = ['questionnaire','num_of_question_answered','duration','score','created']
