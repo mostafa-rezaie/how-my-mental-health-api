@@ -56,3 +56,8 @@ class Results(models.Model):
     duration = models.IntegerField(verbose_name='duration(s)')
     score = models.FloatField()
     created = models.DateTimeField(auto_now_add=True)
+    questionnaire = models.ForeignKey(Questionnaires,
+                                      related_name='results',
+                                      on_delete=models.CASCADE,
+                                      to_field='name',
+                                      default='s1')
