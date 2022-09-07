@@ -54,21 +54,23 @@ class Answer(CreateAPIView):
         answers_count = len(answers)
         if answers_count != question_count:
             return Response({'message': 'questionnaire is not answered completely'}, status=status.HTTP_400_BAD_REQUEST)
-        # print('>>>>>>>>>>>', len(answers))
+        print('>>>>>>>>>>>', len(answers))
         sum_ans = 0
         for answer in answers:
             qid = answer['qid']
             answer_choice = answer['answer']
             sum_ans = sum_ans + int(answer_choice)
-            question = Question.objects.filter(questionnaire__name__contains=questionnaire_name).get(
-                qid__contains=qid)
+            question = Question.objects.filter(questionnaire__name=questionnaire_name).get(
+                qid=qid)
             Answers.objects.create(user=request.user, question=question, answer=answer_choice)
         score = sum_ans * 3.1
+        print('>>>>>>>>>>>1')
         Results.objects.create(user=request.user,
                                num_of_question_answered=answers_count,
                                duration=320,
                                score=score,
                                questionnaire=questionnaire)
+        print('>>>>>>>>>>>2')
         return Response({'message': 'answers submitted successfully'})
 
 
