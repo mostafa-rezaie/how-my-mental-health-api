@@ -61,3 +61,19 @@ class Results(models.Model):
                                       on_delete=models.CASCADE,
                                       to_field='name',
                                       default='s1')
+    description = models.CharField(max_length=255,null=True,verbose_name='description')
+# class BfpResults(models.Model):
+#     class Meta:
+#         ordering = ['id']
+#
+#     user = models.ForeignKey(UserProfile, related_name='result', on_delete=models.CASCADE)
+#     num_of_question_answered = models.IntegerField()
+#     duration = models.IntegerField(verbose_name='duration(s)')
+#     score = models.FloatField()
+#     created = models.DateTimeField(auto_now_add=True)
+#     questionnaire = models.ForeignKey(Questionnaires,
+#                                       related_name='results',
+#                                       on_delete=models.CASCADE,
+#                                       to_field='name',
+#                                       default='s1')
+
