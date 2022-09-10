@@ -26,6 +26,7 @@ from profile_api.serializers import UserProfileSerializer, LoginSerializer
 class RegisterNewUser(CreateAPIView):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
+    authentication_classes = []
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -78,5 +79,3 @@ class IsUp(APIView):
 
     def get(self, request, *args, **kwargs):
         return Response({'message': 'system is up'})
-
-
