@@ -31,4 +31,4 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
 class ResultsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Results
-        fields = ['questionnaire','num_of_question_answered','duration','score','created']
+        fields = ['questionnaire','num_of_question_answered','duration','score','created','description']

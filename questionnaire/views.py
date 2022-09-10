@@ -91,7 +91,7 @@ class Answer(CreateAPIView):
             # print('>>>>>>', cons_factor)
             # print('>>>>>>', neu_factor)
 
-            score = 12
+            score = sum(ans_choice)
             results = \
                 'Openness: ' + str(open_factor) + ' Conscientiousness: ' + str(
                     cons_factor) + ' Extroversion: ' + str(extr_factor) + ' Agreeableness:' + str(
