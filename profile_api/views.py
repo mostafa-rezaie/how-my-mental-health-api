@@ -61,7 +61,8 @@ class AuthenticateUser(APIView):
             return Response({'message': 'incorrect password'}, status=status.HTTP_401_UNAUTHORIZED)
             # print('incorrect password')
         token = AuthToken.objects.create(user=user)[1]
-        return Response({'message': 'login successful', 'token': token}, status=status.HTTP_202_ACCEPTED)
+        username = request.user.get_full_name()
+        return Response({'message': 'login successful', 'token': token,'username':username}, status=status.HTTP_202_ACCEPTED)
 
 
 class LogoutUser(APIView):
