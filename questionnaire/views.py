@@ -7,6 +7,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 import json
+import pickle
+import os
+import sklearn
 
 
 class Questionnaire(ListAPIView):
@@ -56,13 +59,16 @@ class Answer(CreateAPIView):
             return Response({'message': 'questionnaire is not answered completely'}, status=status.HTTP_400_BAD_REQUEST)
         print('>>>>>>>>>>>', len(answers))
         sum_ans = 0
-        for answer in answers:
-            qid = answer['qid']
-            answer_choice = answer['answer']
-            sum_ans = sum_ans + int(answer_choice)
-            question = Question.objects.filter(questionnaire__name=questionnaire_name).get(
-                qid=qid)
-            Answers.objects.create(user=request.user, question=question, answer=answer_choice)
+
+        if questionnaire_name.lower() == 'ghq' or questionnaire_name.lower() == 'bfp':
+            for answer in answers:
+                qid = answer['qid']
+                answer_choice = answer['answer']
+                sum_ans = sum_ans + int(answer_choice)
+                question = Question.objects.filter(questionnaire__name=questionnaire_name).get(
+                    qid=qid)
+                Answers.objects.create(user=request.user, question=question, answer=answer_choice)
+
         if questionnaire_name.lower() == 'ghq':
             score = sum_ans - 12
             results = 'Not mention'
@@ -90,12 +96,48 @@ class Answer(CreateAPIView):
             # print('>>>>>>', agree_factor)
             # print('>>>>>>', cons_factor)
             # print('>>>>>>', neu_factor)
+            open_factor = int(open_factor / 40 * 100)
+            cons_factor = int(cons_factor / 40 * 100)
+            neu_factor = int(neu_factor / 40 * 100)
+            extr_factor = int(extr_factor / 40 * 100)
+            agree_factor = int(agree_factor / 40 * 100)
 
             score = sum(ans_choice)
             results = \
-                'Openness: ' + str(open_factor) + ' Conscientiousness: ' + str(
-                    cons_factor) + ' Extroversion: ' + str(extr_factor) + ' Agreeableness:' + str(
-                    agree_factor) + ' Neuroticism: ' + str(neu_factor)
+                'Openness: ' + str(open_factor) + '%' + ',Conscientiousness: ' + str(
+                    cons_factor) + '%' + ',Extroversion: ' + str(extr_factor) + '%' + ',Agreeableness:' + str(
+                    agree_factor) + '%' + ',Neuroticism: ' + str(neu_factor) + '%'
+        elif questionnaire_name.lower() == 'bemp':
+
+            is_male = 0
+            if request.user.gender == 'M':
+                is_male = 1
+
+            answers_len = len(answers)
+            predict_ans = []
+            predict_ans.append(is_male)
+
+            for i in range(answers_len):
+                if i < 2:
+                    predict_ans.append(int(answers[i]['answer']))
+                else:
+                    predict_ans.append(float(answers[i]['answer']))
+
+            results_burn = {
+                1: 'noraml',
+                2: 'low risk',
+                3: 'high risk'
+            }
+            module_dir = os.path.dirname(__file__)
+            print(module_dir)
+            file_path = os.path.join(module_dir, 'svm_clf3.sav')
+            svm_load = pickle.load(open(file_path, 'rb'))
+            sample_data = [0, 0, 0, 4., 8., 7.5]
+            burn_predict = svm_load.predict([predict_ans])
+            results = results_burn[burn_predict[0]]
+            print(results)
+            print(burn_predict)
+            score = -1
         else:
             score = -1
         Results.objects.create(user=request.user,

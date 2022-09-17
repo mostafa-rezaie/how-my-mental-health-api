@@ -6,3 +6,4 @@ pytz==2022.1
 sqlparse==0.4.2
 django-rest-knox
 django-cors-headers
+sklearn == 1.1.1
